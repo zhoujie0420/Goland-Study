@@ -35,34 +35,27 @@ func (this *Server) Handler(conn net.Conn) {
 	// ... 业务逻辑
 	//fmt.Printf("Success")
 
-	user := NewUser(conn)
-
-	//用户上线，将用户放入onlineMap中
-	this.mapLock.Lock()
-	this.OnlineMap[user.Name] = user
-	this.mapLock.Unlock()
+	user := NewUser(conn, this)
 
 	//广播当前用户上线消息
-	this.BroadCast(user, "已上线")
-
+	user.Online()
 	//接受客户端发送的消息
 	go func() {
 		buf := make([]byte, 4086)
 		for {
 			n, err := conn.Read(buf)
 			if n == 0 {
-				this.BroadCast(user, "下线")
+				user.Offline()
 				return
 			}
-
 			if err != nil && err != io.EOF {
 				fmt.Printf("conn read err:", err)
 				return
 			}
-
 			// 提取消息，驱除 \n
 			msg := string(buf[:n-1])
-			this.BroadCast(user, msg)
+
+			user.DoMessage(msg)
 		}
 	}()
 
