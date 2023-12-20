@@ -92,6 +92,29 @@ func (this *User) DoMessage(msg string) {
 			this.Name = newName
 			this.SendMsg("用户名修改成功")
 		}
+	} else if len(msg) > 4 && msg[:3] == "to|" {
+		// 消息格式  to|name|消息
+
+		// 1.获取用户名
+		remoteName := strings.Split(msg, "|")[1]
+		if remoteName == "" {
+			this.SendMsg("消息内容格式不正确")
+			return
+		}
+
+		// 2.根据用户名获取user对象
+		remoteUser, ok := this.server.OnlineMap[remoteName]
+		if !ok {
+			this.SendMsg("该用户不存在")
+			return
+		}
+		// 3.获取消息内容，通过对方user将对象内容发送
+		content := strings.Split(msg, "|")[2]
+		if content == "" {
+			this.SendMsg("无消息内容，建议重发")
+			return
+		}
+		remoteUser.SendMsg(this.Name + "对您说" + content)
 	} else {
 		this.server.BroadCast(this, msg)
 	}
