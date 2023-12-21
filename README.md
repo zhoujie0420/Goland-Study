@@ -1,3 +1,4 @@
 # go-IM-Study
 
-// study goland demo
+study goland demo
+
