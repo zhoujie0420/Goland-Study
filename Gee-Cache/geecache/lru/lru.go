@@ -62,6 +62,7 @@ func (c *Cache) Add(key string, value Value) {
 		c.ll.MoveToFront(ele)
 		kv := ele.Value.(*entry)
 		c.nBytes += int64(value.Len()) - int64(value.Len())
+		kv.value = value
 	}
 
 	for c.maxBytes != 0 && c.maxBytes < c.nBytes {
