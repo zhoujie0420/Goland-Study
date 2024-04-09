@@ -1,4 +1,4 @@
-package goasync
+package main
 
 func SafeClose(ch chan struct{}) (ok bool) {
 	defer func() {

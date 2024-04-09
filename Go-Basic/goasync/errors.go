@@ -1,4 +1,4 @@
-package goasync
+package main
 
 import (
 	"fmt"
